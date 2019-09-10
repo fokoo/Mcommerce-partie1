@@ -52,12 +52,24 @@ public class ProductController {
     @ApiOperation(value = "calcule la marge de chaque produit (différence entre prix d‘achat et prix de vente)")
     @GetMapping(value = "/AdminProduits")
     public Map<Product, Integer> calculerMargeProduit() {
+    	
         List<Product> produits = productDao.findAll();
-        		produits.sort( (Product p1, Product p2) -> p1.getId()-p2.getId() );
+        produits.sort( (Product p1, Product p2) -> p1.getId()-p2.getId() );
+        		
         Map<Product, Integer> mapProduitMarge = new HashMap<Product, Integer>();
+        
         produits.forEach( (p) -> mapProduitMarge.put(p, p.getPrix()-p.getPrixAchat()) );
        
        return mapProduitMarge;
+    }
+    
+    @ApiOperation(value = "La méthode  trier Produits Par Ordre Alphabetique ")
+    @GetMapping(value = "/ProduitsParOrdreAlphabetique")
+    public List<Product> trierProduitsParOrdreAlphabetique() {
+    	
+       List<Product> produits = productDao.findByOrderByNomAsc();
+       
+       return produits;
     }
     
     //Récupérer un produit par son Id
