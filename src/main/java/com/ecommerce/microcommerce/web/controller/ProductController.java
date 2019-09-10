@@ -16,7 +16,9 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import javax.validation.Valid;
 import java.net.URI;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 
 @Api( description="API pour es opérations CRUD sur les produits.")
@@ -47,7 +49,17 @@ public class ProductController {
         return produitsFiltres;
     }
 
-
+    @ApiOperation(value = "calcule la marge de chaque produit (différence entre prix d‘achat et prix de vente)")
+    @GetMapping(value = "/AdminProduits")
+    public Map<Product, Integer> calculerMargeProduit() {
+        List<Product> produits = productDao.findAll();
+        		produits.sort( (Product p1, Product p2) -> p1.getId()-p2.getId() );
+        Map<Product, Integer> mapProduitMarge = new HashMap<Product, Integer>();
+        produits.forEach( (p) -> mapProduitMarge.put(p, p.getPrix()-p.getPrixAchat()) );
+       
+       return mapProduitMarge;
+    }
+    
     //Récupérer un produit par son Id
     @ApiOperation(value = "Récupère un produit grâce à son ID à condition que celui-ci soit en stock!")
     @GetMapping(value = "/Produits/{id}")
@@ -85,22 +97,21 @@ public class ProductController {
 
     @DeleteMapping (value = "/Produits/{id}")
     public void supprimerProduit(@PathVariable int id) {
-
         productDao.delete(id);
     }
 
     @PutMapping (value = "/Produits")
     public void updateProduit(@RequestBody Product product) {
-
-        productDao.save(product);
+       
+    	productDao.save(product);
     }
 
 
     //Pour les tests
     @GetMapping(value = "test/produits/{prix}")
     public List<Product>  testeDeRequetes(@PathVariable int prix) {
-
-        return productDao.chercherUnProduitCher(400);
+     
+    	return productDao.chercherUnProduitCher(400);
     }
 
 
