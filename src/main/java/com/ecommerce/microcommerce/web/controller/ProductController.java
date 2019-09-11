@@ -117,7 +117,6 @@ public class ProductController {
     	productDao.save(product);
     }
 
-
     //Pour les tests
     @GetMapping(value = "test/produits/{prix}")
     public List<Product>  testeDeRequetes(@PathVariable int prix) {
